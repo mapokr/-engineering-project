@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,7 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class Register extends AppCompatActivity {
     EditText register_name,register_email,register_password_1,register_password_2;
     Button register_button;
-    TextView swap_to_login_button;
+    TextView swap_to_login_button,rule_login ;
+    CheckBox accept_rule;
     ProgressBar register_progress_bar;
     FirebaseAuth authorization;
     @Override
@@ -35,6 +37,9 @@ public class Register extends AppCompatActivity {
         register_password_2 = (EditText) findViewById((R.id.password_secound_view));
         register_button = (Button) findViewById(R.id.button);
         register_progress_bar = (ProgressBar) findViewById(R.id.progressBar_register);
+        accept_rule = (CheckBox) findViewById(R.id.accept_reg_check);
+        rule_login = findViewById(R.id.Rule_view);
+        swap_to_login_button = findViewById(R.id.login_view);
         authorization = (FirebaseAuth) FirebaseAuth.getInstance();
         if(authorization.getCurrentUser()!= null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -43,7 +48,8 @@ public class Register extends AppCompatActivity {
 
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 String email = register_email.getText().toString().trim();
                 String name = register_name.getText().toString().trim();
                 String password_first = register_password_1.getText().toString().trim();
@@ -68,6 +74,10 @@ public class Register extends AppCompatActivity {
                     register_password_1.setError("haslo musi miec iwecej niz 5 znaków");
                     return;
                 }
+                if(!accept_rule.isChecked()){
+                    accept_rule.setError("Aby stworzyć konto trzeba zaakceptować regulamin");
+                    return;
+                }
                 if(!password_first.equals(password_s)){
                     register_password_1.setError("haslo sa różne");
                     return;
@@ -90,6 +100,17 @@ public class Register extends AppCompatActivity {
                 });
             }
         });
-
+        swap_to_login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),Login.class));
+            }
+        });
+        rule_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),Rule.class));
+            }
+        });
     }
 }
