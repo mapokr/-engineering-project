@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,9 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Register extends AppCompatActivity {
     EditText register_name,register_email,register_password_1,register_password_2;
@@ -26,6 +33,8 @@ public class Register extends AppCompatActivity {
     CheckBox accept_rule;
     ProgressBar register_progress_bar;
     FirebaseAuth authorization;
+    FirebaseFirestore store;
+    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +50,7 @@ public class Register extends AppCompatActivity {
         rule_login = findViewById(R.id.Rule_view);
         swap_to_login_button = findViewById(R.id.login_view);
         authorization = (FirebaseAuth) FirebaseAuth.getInstance();
+        store = FirebaseFirestore.getInstance();
         if(authorization.getCurrentUser()!= null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
             finish();
@@ -90,6 +100,17 @@ public class Register extends AppCompatActivity {
                         if(task.isSuccessful()){
 
                             Toast.makeText(Register.this, "Stworzono uzytkownika", Toast.LENGTH_SHORT).show();
+                            userId = authorization.getCurrentUser().getUid();
+                            DocumentReference create_colection = store.collection("users").document(userId).collection("note").document("pierwsza_lista");
+                            Map<String,Object> note = new HashMap<>();
+                            note.put("1","cukier ");
+                            create_colection.set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+
+                                }
+                            });
+
                             startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         }else{
                             Toast.makeText(Register.this, "Nie udało się stworzyć użytkownika", Toast.LENGTH_SHORT).show();
