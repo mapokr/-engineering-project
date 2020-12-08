@@ -20,10 +20,14 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.shop_app.R;
 import com.example.shop_app.Register;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +41,7 @@ public class DashboardFragment extends Fragment {
     FirebaseFirestore store;
     String userId;
     FirebaseAuth authorization;
-    ArrayAdapter arrayAdapter;
+
 
 
 
@@ -56,7 +60,7 @@ public class DashboardFragment extends Fragment {
         add_list = (Button) root.findViewById(R.id.add_to_db);
         authorization = (FirebaseAuth) FirebaseAuth.getInstance();
         store = FirebaseFirestore.getInstance();
-        product_list =(ListView) root.findViewById((R.id.database_list_view)) ;
+        //product_list =(ListView) root.findViewById((R.id.database_list_view)) ;
         final Map<String,Object> item_list = new HashMap<>();
         add_product.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +87,7 @@ public class DashboardFragment extends Fragment {
         add_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int x=0;
                 String name = name_list.getText().toString().trim();
                 if(item_list.size()<1){
                     item.setError("musisz dodać jakis produkt");
@@ -95,8 +100,9 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 userId = authorization.getCurrentUser().getUid();
-                DocumentReference create_colection = store.collection("users").document(userId).collection("note").document(name);
-                create_colection.set(item_list).addOnSuccessListener(new OnSuccessListener<Void>() {
+                DocumentReference create_colection = store.collection("users").document(userId).collection("note").document();
+                item_list.put("title",name);
+                create_colection.set(item_list, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         item_list.clear();
@@ -107,6 +113,7 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
