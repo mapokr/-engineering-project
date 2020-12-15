@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,8 @@ public class DashboardFragment extends Fragment {
     FirebaseFirestore store;
     String userId;
     FirebaseAuth authorization;
+    ArrayList<String> arrayList = new ArrayList<String>();;
+    ListView lv;
 
 
 
@@ -53,6 +56,7 @@ public class DashboardFragment extends Fragment {
                 ViewModelProviders.of(this).get(DashboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
         //final TextView textView = root.findViewById(R.id.text_dashboard);
+        lv = (ListView) root.findViewById(R.id.actual_list);
         item = (EditText) root.findViewById(R.id.item);
         name_list = (EditText) root.findViewById(R.id.editTextTextPersonName);
         count_item = (EditText) root.findViewById(R.id.count_item);
@@ -78,8 +82,11 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 item_list.put(i,ci);
+                arrayList.add(i+" "+ ci);
+                lv.setAdapter(new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,arrayList));
                 item.setText("");
                 count_item.setText("");
+
 
 
             }
@@ -100,12 +107,14 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 userId = authorization.getCurrentUser().getUid();
-                DocumentReference create_colection = store.collection("users").document(userId).collection("note").document();
+                DocumentReference create_colection = store.collection("users").document(userId).collection("note").document(name);
                 item_list.put("title",name);
                 create_colection.set(item_list, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        item_list.clear();
+                        arrayList.clear();
+                        lv.setAdapter(null);
+
                     }
                 });
 
