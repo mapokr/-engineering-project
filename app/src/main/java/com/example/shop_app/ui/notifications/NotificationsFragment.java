@@ -59,6 +59,7 @@ public class NotificationsFragment extends Fragment {
         authorization = (FirebaseAuth) FirebaseAuth.getInstance();
         store = FirebaseFirestore.getInstance();
         userId = authorization.getCurrentUser().getUid();
+
         store.collection("users").document(userId).collection("note")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -88,7 +89,7 @@ public class NotificationsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 final int w_item = position;
                 String selectedFromList = (String) lv.getItemAtPosition(position);
-                new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_delete).setTitle("Lista zakupów").setMessage("tu bedzie lista zakupów")
+                new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_DARK).setIcon(android.R.drawable.ic_delete).setTitle("Lista zakupów").setMessage(" ")
                         .setPositiveButton("Usuń", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -115,6 +116,7 @@ public class NotificationsFragment extends Fragment {
                 }).setNegativeButton("wyświetl",null).show();
             }
         });
+
         //final TextView textView = root.findViewById(R.id.text_notifications);
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override

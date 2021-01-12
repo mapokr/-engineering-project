@@ -65,7 +65,9 @@ public class DashboardFragment extends Fragment {
         authorization = (FirebaseAuth) FirebaseAuth.getInstance();
         store = FirebaseFirestore.getInstance();
         //product_list =(ListView) root.findViewById((R.id.database_list_view)) ;
+
         final Map<String,Object> item_list = new HashMap<>();
+
         add_product.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,9 +88,6 @@ public class DashboardFragment extends Fragment {
                 lv.setAdapter(new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,arrayList));
                 item.setText("");
                 count_item.setText("");
-
-
-
             }
         });
         add_list.setOnClickListener(new View.OnClickListener() {
@@ -117,9 +116,6 @@ public class DashboardFragment extends Fragment {
 
                     }
                 });
-
-
-
             }
         });
 
